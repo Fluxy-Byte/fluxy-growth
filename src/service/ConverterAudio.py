@@ -30,7 +30,7 @@ def converter_audio(path: str):
         arquivo_remoto = genai.upload_file(path=path, mime_type=tipo_mime)
         # -----------------------
 
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.5-flash")
 
         # 2. Gera a transcrição
         response = model.generate_content([
