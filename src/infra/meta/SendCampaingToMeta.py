@@ -20,8 +20,13 @@ logger = logging.getLogger(__name__)
 def send_campaing(data: dict):
     payload = data.get("payload")
     phone_number_id = data.get("phone_number_id")
+    categoria = data.get("category")
 
-    url_meta = f"https://graph.facebook.com/v22.0/{phone_number_id}/messages"
+    type_message = "messages"
+    if categoria == "marketing":
+        type_message = "marketing_messages"
+
+    url_meta = f"https://graph.facebook.com/v22.0/{phone_number_id}/{type_message}"
 
     headers = {
         "Content-Type": "application/json",
