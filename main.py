@@ -66,7 +66,7 @@ def send_campaign(data: Dict[str, Any]):
 
     try:
         response = send_campaing(data)
-
+        print( f"LOG DO ENVIO DA CAMPANHA: {response}")
         if response.status_code >= 400:
             raise HTTPException(
                 status_code=response.status_code,
@@ -74,7 +74,7 @@ def send_campaign(data: Dict[str, Any]):
             )
 
         return {
-            "status": "success",
+            "status": 200,
             "meta_response": response.json()
         }
 
