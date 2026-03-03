@@ -62,31 +62,8 @@ class CampaingRequest(BaseModel):
 
 
 @app.post("/send-campaign")
-def send_campaign(data: Dict[str, Any]):
-
-    try:
-        response = send_campaing(data)
-        print( f"LOG DO ENVIO DA CAMPANHA: {response}")
-        if response.status_code >= 400:
-            raise HTTPException(
-                status_code=response.status_code,
-                detail=response.text
-            )
-
-        return {
-            "status": 200,
-            "meta_response": response.json()
-        }
-
-    except HTTPException:
-        raise
-
-    except Exception:
-        raise HTTPException(
-            status_code=500,
-            detail="Erro interno no servidor"
-        )
-
+async def send_campaign(data: Dict[str, Any]):
+    return await send_campaing(data)
 
 @app.post("/send-message")
 def send_message(data: MensagemRequest):

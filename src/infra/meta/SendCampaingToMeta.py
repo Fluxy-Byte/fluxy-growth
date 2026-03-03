@@ -1,25 +1,23 @@
 import os
-import requests
+import httpx
 import logging
+from fastapi import FastAPI
 from dotenv import load_dotenv
+from typing import Dict, Any
 
 load_dotenv()
+
+app = FastAPI()
 
 TOKEN_META = os.getenv("TOKEN_META")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
 
-if not TOKEN_META:
-    raise Exception("TOKEN_META não definido no .env")
-
-if not PHONE_NUMBER_ID:
-    raise Exception("PHONE_NUMBER_ID não definido no .env")
-
 logger = logging.getLogger(__name__)
 
 
-def send_campaing(data: dict):
+async def send_campaing(data: Dict[str, Any]):
     payload = data.get("payload")
-    phone_number_id = data.get("phone_number_id")
+    phone_number_id = data.get("phone_number_id", PHONE_NUMBER_ID)
     categoria = data.get("category")
 
     type_message = "messages"
@@ -33,20 +31,14 @@ def send_campaing(data: dict):
         "Authorization": f"Bearer {TOKEN_META}"
     }
 
-    try:
-        response = requests.post(
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        response = await client.post(
             url_meta,
             json=payload,
-            headers=headers,
-            timeout=15
+            headers=headers
         )
 
-        logger.info(f"Meta response: {response.status_code}")
-
-        return response
-
-    except requests.exceptions.RequestException as e:
-
-        logger.error(f"Erro ao chamar Meta API: {e}")
-
-        raise Exception("Falha ao se comunicar com a Meta API")
+    return {
+        data: response.json(),
+        status: response.status_code
+    }
